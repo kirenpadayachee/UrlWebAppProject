@@ -29,6 +29,7 @@
  **/
  
  include("mysqldb/mySqlDbInit.php");
+
  $mySqlDbInit = new MySqlDbInit();
  $mySqlDbInit->initDb();
  
@@ -82,7 +83,7 @@ function deliver_response($format, $api_response){
 		echo $api_response['data'];
 
 	}
-
+	
 	// End script process
 	exit;
 
@@ -162,6 +163,9 @@ if( strcasecmp($_GET['method'],'hello') == 0){
 
 // Return Response to browser
 deliver_response($_GET['format'], $response);
+
+
+
 
 ?>
     
