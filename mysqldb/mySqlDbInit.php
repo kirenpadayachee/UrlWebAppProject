@@ -35,7 +35,7 @@ class MySqlDbInit
 		{
 			if ($conn->query(self::$dbCreateDbQuery) === TRUE) 
 			{
-				echo nl2br("Database created successfully \n");
+				//echo nl2br("Database created successfully \n");
 			} 
 			else 
 			{
@@ -56,7 +56,7 @@ class MySqlDbInit
 		{
 			if ($result = $conn->query(self::$tableCreateQuery) === TRUE) 
 			{
-				echo nl2br("Table created successfully \n");
+				//echo nl2br("Table created successfully \n");
 			} 
 			else 
 			{

@@ -31,14 +31,14 @@
 include("mysqldb/mySqlDbInit.php");
 include("mysqldb/mySqlDbCrudOperations.php");
 
-MySqlDbCrudOperations::insertIntoHttpPairs("/test", "POST", "200", "A-OK bro!");
-MySqlDbCrudOperations::insertIntoHttpPairs("/test2", "POST", "200", "Hello Dave...");
+//MySqlDbCrudOperations::insertIntoHttpPairs("/test", "POST", "200", "A-OK bro!");
+//MySqlDbCrudOperations::insertIntoHttpPairs("/test2", "POST", "200", "Hello Dave...");
 //MySqlDbCrudOperations::deleteFromHttpPairs("/test", "POST");
-MySqlDbCrudOperations::updateHttpPairs("/test", "GET", 201, "Super!!!");
+//MySqlDbCrudOperations::updateHttpPairs("/test", "GET", 201, "Super!!!");
 
-MySqlDbCrudOperations::printResultSet(MySqlDbCrudOperations::getResultSetForSelectAllFromHttpPairs());
+//MySqlDbCrudOperations::printResultSet(MySqlDbCrudOperations::getResultSetForSelectAllFromHttpPairs());
 
-MySqlDbCrudOperations::printResultSet(MySqlDbCrudOperations::getResultSetForSelectOneFromHttpPairs("/test", "POST"));
+//MySqlDbCrudOperations::printResultSet(MySqlDbCrudOperations::getResultSetForSelectOneFromHttpPairs("/test", "POST"));
  
 function deliver_response($format, $api_response){
 
@@ -96,11 +96,6 @@ function deliver_response($format, $api_response){
 
 }
 
-// Define whether an HTTPS connection is required
-$HTTPS_required = FALSE;
-
-// Define whether user authentication is required
-$authentication_required = FALSE;
 
 // Define API response codes and their related HTTP response
 $api_response_code = array(
@@ -113,60 +108,63 @@ $api_response_code = array(
 	6 => array('HTTP Response' => 400, 'Message' => 'Invalid Response Format')
 );
 
+$requestType = $_SERVER['REQUEST_METHOD'];
+$requestUrl = $_SERVER['REQUEST_URI'];
+
+
 // Set default HTTP response of 'ok'
 $response['code'] = 0;
 $response['status'] = 404;
 $response['data'] = NULL;
 
-// --- Step 2: Authorization
-
-// Optionally require connections to be made via HTTPS
-if( $HTTPS_required && $_SERVER['HTTPS'] != 'on' ){
-	$response['code'] = 2;
-	$response['status'] = $api_response_code[ $response['code'] ]['HTTP Response'];
-	$response['data'] = $api_response_code[ $response['code'] ]['Message'];
-
-	// Return Response to browser. This will exit the script.
-	deliver_response($_GET['format'], $response);
-}
-
-// Optionally require user authentication
-if( $authentication_required ){
-
-	if( empty($_POST['username']) || empty($_POST['password']) ){
-		$response['code'] = 3;
-		$response['status'] = $api_response_code[ $response['code'] ]['HTTP Response'];
-		$response['data'] = $api_response_code[ $response['code'] ]['Message'];
-
-		// Return Response to browser
-		deliver_response($_GET['format'], $response);
-
-	}
-
-	// Return an error response if user fails authentication. This is a very simplistic example
-	// that should be modified for security in a production environment
-	elseif( $_POST['username'] != 'foo' && $_POST['password'] != 'bar' ){
-		$response['code'] = 4;
-		$response['status'] = $api_response_code[ $response['code'] ]['HTTP Response'];
-		$response['data'] = $api_response_code[ $response['code'] ]['Message'];
-
-		// Return Response to browser
-		deliver_response($_GET['format'], $response);
-
-	}
-
-}
-
-// --- Step 3: Process Request
+// --- Step 2: Process Request
 
 // Method A: Say Hello to the API
-if( strcasecmp($_GET['method'],'hello') == 0){
-	$response['code'] = 1;
-	$response['status'] = $api_response_code[ $response['code'] ]['HTTP Response'];
-	$response['data'] = 'Hello World';
+
+$method = $_GET['method'];
+
+/*
+echo "METHODDDDDDDDD ::::::::    " . $method . "        ";
+echo "requestType ::::::::    " . $requestType . "        ";
+echo "requestUrl ::::::::    " . $requestUrl . "        ";
+echo "COMPARE :::: " . ( strcasecmp($method,'httppair') == 0);
+*/
+
+if( strcasecmp($method,'httppair') == 0)
+{
+	  switch($requestType) {
+	  case 'PUT':
+			$response['code'] = 1;
+			$response['status'] = $api_response_code[ $response['code'] ]['HTTP Response'];
+			$response['data'] = "Hello World " .  $requestType . " " . $requestUrl . " " . $_GET['method'];
+		  break;
+	 
+	  case 'DELETE':
+			$response['code'] = 1;
+			$response['status'] = $api_response_code[ $response['code'] ]['HTTP Response'];
+			$response['data'] = "Hello World " .  $requestType . " " . $requestUrl . " " . $_GET['method'];
+		  break;
+	 
+	  case 'GET':
+			$response['code'] = 1;
+			$response['status'] = $api_response_code[ $response['code'] ]['HTTP Response'];
+			$response['data'] = MySqlDbCrudOperations::getResultSetString(MySqlDbCrudOperations::getResultSetForSelectAllFromHttpPairs()) .  $requestType . " " . $requestUrl . " " . $_GET['method'];
+			//$response['data'] =  $requestType . " " . $requestUrl . " " . $_GET['method'];
+		  break;
+	  default:
+		  header('HTTP/1.1 405 Method Not Allowed');
+		  header('Allow: GET, PUT, DELETE');
+		  break;
+	  }
 }
 
-// --- Step 4: Deliver Response
+if( strcasecmp($method,'hello') == 0){
+	$response['code'] = 1;
+	$response['status'] = $api_response_code[ $response['code'] ]['HTTP Response'];
+	$response['data'] = "Hello World " .  $requestType . " " . $requestUrl . " " . $_GET['method'];
+}
+
+// --- Step 3: Deliver Response
 
 // Return Response to browser
 deliver_response($_GET['format'], $response);

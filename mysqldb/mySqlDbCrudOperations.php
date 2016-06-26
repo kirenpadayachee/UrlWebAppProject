@@ -32,7 +32,7 @@ class MySqlDbCrudOperations
 			
 			if ($result = $conn->query($insertQuery) === TRUE) 
 			{
-				echo nl2br("Table Insert Success \n");
+				//echo nl2br("Table Insert Success \n");
 			} 
 			else 
 			{
@@ -56,7 +56,7 @@ class MySqlDbCrudOperations
 			
 			if ($result = $conn->query($updateQuery) === TRUE) 
 			{
-				echo nl2br("Table Update Success \n");
+				//echo nl2br("Table Update Success \n");
 			} 
 			else 
 			{
@@ -78,7 +78,7 @@ class MySqlDbCrudOperations
 			
 			if ($result = $conn->query($deleteQuery) === TRUE) 
 			{
-				echo nl2br("Table record deletion Success \n");
+				//echo nl2br("Table record deletion Success \n");
 			} 
 			else 
 			{
@@ -97,7 +97,7 @@ class MySqlDbCrudOperations
 		if(!is_null($conn))
 		{
 			$selectAllQuery = self::$selectQueryMain;
-			echo nl2br("{$selectAllQuery} \n");
+			//echo nl2br("{$selectAllQuery} \n");
 			$result = $conn->query($selectAllQuery);
 
 			$conn->close();
@@ -115,13 +115,31 @@ class MySqlDbCrudOperations
 		{
 			$selectOneQuery = self::$selectQueryMain . "WHERE " . MySqlDbConnection::getHttpRequestUrlColumnName() . " LIKE '" . $httpRequestUrl . "' AND " . MySqlDbConnection::getHttpRequestTypeColumnName() . " LIKE '" . $httpRequestType . "'";
 			
-			echo nl2br("{$selectOneQuery} \n");
+			//echo nl2br("{$selectOneQuery} \n");
 			$result = $conn->query($selectOneQuery);
 
 			$conn->close();
 		}
 		
 		return $result;
+	}
+	
+	public static function getResultSetString($resultSet)
+	{
+		$resultString = "";
+		
+		if(!is_null($resultSet))
+		{
+			$resultString .= '<table cellpadding="0" cellspacing="0" class="db-table">';
+			$resultString .=  "<tr><th>" . MySqlDbConnection::getHttpRequestUrlColumnName() . "</th><th>" . MySqlDbConnection::getHttpRequestTypeColumnName() . "</th><th>" . MySqlDbConnection::getHttpResponseStatusCodeColumnName() . "</th><th>" . MySqlDbConnection::getHttpResponseMessageColumnName() . "</th></tr>";
+			while($row = $resultSet->fetch_assoc()) 
+			{
+				$resultString .=  "<tr><th>" . $row[MySqlDbConnection::getHttpRequestUrlColumnName()] . "</th><th>" . $row[MySqlDbConnection::getHttpRequestTypeColumnName()] . "</th><th>" . $row[MySqlDbConnection::getHttpResponseStatusCodeColumnName()] . "</th><th>" . $row[MySqlDbConnection::getHttpResponseMessageColumnName()] . "</th></tr>";
+			}
+			$resultString .=  '</table><br />';
+		}
+		
+		return $resultString;
 	}
 	
 	public static function printResultSet($resultSet)
