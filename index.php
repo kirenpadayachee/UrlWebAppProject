@@ -31,9 +31,14 @@
 include("mysqldb/mySqlDbInit.php");
 include("mysqldb/mySqlDbCrudOperations.php");
 
-//MySqlDbCrudOperations::insertIntoHttpPairs("/test", "POST", "200", "A-OK bro!");
+MySqlDbCrudOperations::insertIntoHttpPairs("/test", "POST", "200", "A-OK bro!");
+MySqlDbCrudOperations::insertIntoHttpPairs("/test2", "POST", "200", "Hello Dave...");
 //MySqlDbCrudOperations::deleteFromHttpPairs("/test", "POST");
 MySqlDbCrudOperations::updateHttpPairs("/test", "GET", 201, "Super!!!");
+
+MySqlDbCrudOperations::printResultSet(MySqlDbCrudOperations::getResultSetForSelectAllFromHttpPairs());
+
+MySqlDbCrudOperations::printResultSet(MySqlDbCrudOperations::getResultSetForSelectOneFromHttpPairs("/test", "POST"));
  
 function deliver_response($format, $api_response){
 

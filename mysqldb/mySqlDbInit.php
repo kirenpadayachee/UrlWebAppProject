@@ -41,9 +41,9 @@ class MySqlDbInit
 			{
 				echo nl2br("Error creating database: " . $conn->error . "\n");
 			}
+			
+			$conn->close();
 		}
-		
-		$conn->close();
 	}
 
 	// Create Table ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -52,16 +52,19 @@ class MySqlDbInit
 	{
 		$conn = MySqlDbConnection::getDbConnection();
 		
-		if ($result = $conn->query(self::$tableCreateQuery) === TRUE) 
+		if(!is_null($conn))
 		{
-			echo nl2br("Table created successfully \n");
-		} 
-		else 
-		{
-			echo nl2br("Error creating table: " . $conn->error . "\n");
+			if ($result = $conn->query(self::$tableCreateQuery) === TRUE) 
+			{
+				echo nl2br("Table created successfully \n");
+			} 
+			else 
+			{
+				echo nl2br("Error creating table: " . $conn->error . "\n");
+			}
+			
+			$conn->close();
 		}
-		
-		$conn->close();
 	}
 
 	// Iniit DB ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
