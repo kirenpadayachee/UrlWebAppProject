@@ -16,11 +16,12 @@ class MySqlDbInit
 	public static function init()
 	{
 		self::$dbCreateDbQuery = "CREATE DATABASE IF NOT EXISTS " . MySqlDbConnection::getDbName();
-		self::$tableCreateQuery = "CREATE TABLE IF NOT EXISTS " . MySqlDbConnection::getTableName() . " (
-		httpRequestUrl VARCHAR(255) NOT NULL PRIMARY KEY,
+		self::$tableCreateQuery = "CREATE TABLE IF NOT EXISTS " . MySqlDbConnection::getHttpPairTableName() . " (
+		httpRequestUrl VARCHAR(255) NOT NULL,
 		httpRequestType VARCHAR(255) NOT NULL,
 		httpResponseStatusCode int NOT NULL,
-		httpResponseMessage TEXT NOT NULL
+		httpResponseMessage TEXT NOT NULL,
+		PRIMARY KEY (httpRequestUrl, httpRequestType)
 		)";
 	}
 
@@ -29,6 +30,7 @@ class MySqlDbInit
 	private static function createDb()
 	{
 		$conn = MySqlDbConnection::getMySqlConnection();
+		
 		if(!is_null($conn))
 		{
 			if ($conn->query(self::$dbCreateDbQuery) === TRUE) 
@@ -40,6 +42,8 @@ class MySqlDbInit
 				echo nl2br("Error creating database: " . $conn->error . "\n");
 			}
 		}
+		
+		$conn->close();
 	}
 
 	// Create Table ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -47,7 +51,6 @@ class MySqlDbInit
 	private static function createTable()
 	{
 		$conn = MySqlDbConnection::getDbConnection();
-		$tableExists = false;
 		
 		if ($result = $conn->query(self::$tableCreateQuery) === TRUE) 
 		{
@@ -57,6 +60,8 @@ class MySqlDbInit
 		{
 			echo nl2br("Error creating table: " . $conn->error . "\n");
 		}
+		
+		$conn->close();
 	}
 
 	// Iniit DB ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -69,5 +74,6 @@ class MySqlDbInit
 }
 
 MySqlDbInit::init();
+MySqlDbInit::initDb();
 
 ?>

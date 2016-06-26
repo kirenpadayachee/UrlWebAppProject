@@ -12,7 +12,11 @@ class MySqlDbConnection
 	private static $dbuser = 'root';
 	private static $dbpass = 'mysql';
 	private static $dbName = 'UrlWebAppDb';
-	private static $tableName  = "HttpPair";
+	private static $httpPairTableName  = "HttpPair";
+	private static $httpRequestUrlCol	= "httpRequestUrl";
+	private static $httpRequestTypeCol	= "httpRequestType";
+	private static $httpResponseStatusCodeCol	= "httpResponseStatusCode";
+	private static $httpResponseMessageCol	= "httpResponseMessage";
 	
 	public function isDbConnected()
 	{
@@ -39,9 +43,24 @@ class MySqlDbConnection
 		return self::$dbName;
 	}
 	
-	public static function getTableName()
+	public static function getHttpPairTableName()
 	{
-		return self::$tableName;
+		return self::$httpPairTableName;
+	}
+	
+	public static function getColumnNames()
+	{
+		return self::$httpRequestUrlCol . ", " . self::$httpRequestTypeCol . ", " . self::$httpResponseStatusCodeCol . ", " . self::$httpResponseMessageCol;
+	}
+	
+	public static function getHttpRequestUrlColumnName()
+	{
+		return self::$httpRequestUrlCol;
+	}
+	
+	public static function getHttpRequestTypeColumnName()
+	{
+		return self::$httpRequestTypeCol;
 	}
 	
 	public static function getMySqlConnection()
