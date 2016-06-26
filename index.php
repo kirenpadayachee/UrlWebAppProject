@@ -12,6 +12,7 @@
 	Output: A formatted HTTP response
 
 	Author: Mark Roland
+	Edited : Kiren Padayachee
 
 	History:
 		11/13/2012 - Created
@@ -26,6 +27,11 @@
  * @param string $api_response The desired HTTP response data
  * @return void
  **/
+ 
+ include("mysqldb/mySqlDbInit.php");
+ $mySqlDbInit = new MySqlDbInit();
+ $mySqlDbInit->initDb();
+ 
 function deliver_response($format, $api_response){
 
 	// Define HTTP responses
