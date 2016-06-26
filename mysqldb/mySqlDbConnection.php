@@ -63,6 +63,16 @@ class MySqlDbConnection
 		return self::$httpRequestTypeCol;
 	}
 	
+	public static function getHttpResponseStatusCodeColumnName()
+	{
+		return self::$httpResponseStatusCodeCol;
+	}
+	
+	public static function getHttpResponseMessageColumnName()
+	{
+		return self::$httpResponseMessageCol;
+	}
+	
 	public static function getMySqlConnection()
 	{
 		// Create connection

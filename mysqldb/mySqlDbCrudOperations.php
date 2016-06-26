@@ -39,11 +39,31 @@ class MySqlDbCrudOperations
 		$conn->close();
 	}
 	
+	public static function updateHttpPairs($httpRequestUrl, $httpRequestType, $httpResponseStatusCode, $httpResponseMessage)
+	{
+	    $conn = MySqlDbConnection::getDbConnection();
+		$updateQuerySet = "SET " . MySqlDbConnection::getHttpResponseStatusCodeColumnName() . "='" .  $httpResponseStatusCode . "' , " . MySqlDbConnection::getHttpResponseMessageColumnName() . "='" .  $httpResponseMessage . "' ";
+		$updateQueryWhere = "WHERE " . MySqlDbConnection::getHttpRequestUrlColumnName() . " LIKE '" . $httpRequestUrl . "' AND " . MySqlDbConnection::getHttpRequestTypeColumnName() . " LIKE '" . $httpRequestType . "'";
+		$updateQuery = self::$updateQueryMain . $updateQuerySet . $updateQueryWhere;
+		echo nl2br("{$updateQuery} \n");
+		
+		if ($result = $conn->query($updateQuery) === TRUE) 
+		{
+			echo nl2br("Table Update Success \n");
+		} 
+		else 
+		{
+			echo nl2br("Error updating table: " . $conn->error . "\n");
+		}
+		
+		$conn->close();
+	}
+	
 	public static function deleteFromHttpPairs($httpRequestUrl, $httpRequestType)
 	{
 	    $conn = MySqlDbConnection::getDbConnection();
 		$deleteQuery = self::$deleteQueryMain . "WHERE " . MySqlDbConnection::getHttpRequestUrlColumnName() . " LIKE '" . $httpRequestUrl . "' AND " . MySqlDbConnection::getHttpRequestTypeColumnName() . " LIKE '" . $httpRequestType . "'";
-		echo nl2br("{$deleteQuery} \n");
+		//echo nl2br("{$deleteQuery} \n");
 		
 		if ($result = $conn->query($deleteQuery) === TRUE) 
 		{
