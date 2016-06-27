@@ -21,14 +21,9 @@
 
 // --- Step 1: Initialize variables and functions
 
-
- 
 include("mysqldb/mySqlDbInit.php");
 include("mysqldb/mySqlDbCrudOperations.php");
 
-//MySqlDbCrudOperations::updateHttpPairs("/test2", "POST", 200, "Wassup Dave...");
-//MySqlDbCrudOperations::insertOrUpdateHttpPairs("/newapi", "GET", 200, "nuuuuuuuu...");
- 
  /**
  * Deliver HTTP Response
  * @param string $format The desired HTTP response content type: [json, html, xml]
@@ -59,6 +54,9 @@ function deliver_response($format, $api_response){
 		{
 			$api_response['data'] = MySqlDbCrudOperations::getResultSetAsArray($api_response['data']);
 		}
+		
+		unset($api_response['isGet']);
+		unset($api_response['code']);
 
 		// Format data into a JSON response
 		$json_response = json_encode($api_response);
@@ -75,11 +73,14 @@ function deliver_response($format, $api_response){
 		{
 			$api_response['data'] = MySqlDbCrudOperations::getResultSetAsXmlString($api_response['data']);
 		}
+		
+		unset($api_response['isGet']);
+		unset($api_response['code']);
 
 		// Format data into an XML response (This is only good at handling string data, not arrays)
 		$xml_response = '<?xml version="1.0" encoding="UTF-8"?>'."\n".
 			'<response>'."\n".
-			"\t".'<code>'.$api_response['code'].'</code>'."\n".
+			"\t".'<statusCode>'.$api_response['status'].'</statusCode>'."\n".
 			"\t".'<data>'.$api_response['data'].'</data>'."\n".
 			'</response>';
 
@@ -95,6 +96,9 @@ function deliver_response($format, $api_response){
 		{
 			$api_response['data'] = MySqlDbCrudOperations::getResultSetAsHtmlString($api_response['data']);
 		}
+		
+		unset($api_response['isGet']);
+		unset($api_response['code']);
 
 		// Deliver formatted data
 		echo $api_response['data'];
@@ -116,9 +120,6 @@ $api_response_code = array(
 	5 => array('HTTP Response' => 404, 'Message' => 'Invalid Request'),
 	6 => array('HTTP Response' => 400, 'Message' => 'Invalid Response Format')
 );
-
-
-
 
 // Set default HTTP response of 'ok'
 $response['code'] = 0;
