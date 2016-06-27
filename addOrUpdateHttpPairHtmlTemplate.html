@@ -1,0 +1,45 @@
+<html>
+<head>
+<meta charset=utf-8 />
+<title>Home Page</title>
+<!--[if IE]>
+  <script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+<![endif]-->
+
+</head>
+<body>
+<form action="addOrUpdateHttpPair.php" method="post">
+
+	 <label for="httpRequestUrl">httpRequestUrl</label>
+     <input id="httpRequestUrl" name="httpRequestUrl" type="text"/>
+
+     <label for="httpRequestType">httpRequestType</label>
+     <input list="httpRequestTypes" name="httpRequestType" id="httpRequestType" />
+     <datalist id="httpRequestTypes">
+         <option value="GET">
+         <option value="POST">
+         <option value="PUT">
+         <option value="DELETE">
+         <option value="OPTIONS">
+         <option value="HEAD">
+         <option value="PATCH">
+         <option value="PROPFIND">
+         <option value="COPY">
+         <option value="MOVE">
+     </datalist>
+     
+	 <label for="httpResponseStatusCode">httpResponseCode</label>
+     <input id="httpResponseStatusCode" name="httpResponseStatusCode" type="text"/>
+	 
+	 <label for="httpResponseMessage">httpResponseMessage</label>
+     <input id="httpResponseMessage" name="httpResponseMessage" type="text"/>
+	 
+	 <input id="insertOrUpdate" name="insertOrUpdate" type="hidden" value="insertOrUpdate"/>
+  
+     <input type="submit" value="Add/Insert" />
+     <br>
+     
+</form>
+</body>
+
+</html>
