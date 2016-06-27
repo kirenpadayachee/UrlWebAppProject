@@ -25,6 +25,9 @@
  
 include("mysqldb/mySqlDbInit.php");
 include("mysqldb/mySqlDbCrudOperations.php");
+
+//MySqlDbCrudOperations::updateHttpPairs("/test2", "POST", 200, "Wassup Dave...");
+//MySqlDbCrudOperations::insertOrUpdateHttpPairs("/newapi", "GET", 200, "nuuuuuuuu...");
  
  /**
  * Deliver HTTP Response
@@ -95,7 +98,6 @@ function deliver_response($format, $api_response){
 
 		// Deliver formatted data
 		echo $api_response['data'];
-
 	}
 	
 	// End script process
@@ -115,20 +117,43 @@ $api_response_code = array(
 	6 => array('HTTP Response' => 400, 'Message' => 'Invalid Response Format')
 );
 
-$requestType = $_SERVER['REQUEST_METHOD'];
-$requestUrl = $_SERVER['REQUEST_URI'];
+
 
 
 // Set default HTTP response of 'ok'
 $response['code'] = 0;
 $response['status'] = 404;
 $response['data'] = NULL;
+$response['isGet'] = false;
 
 // --- Step 2: Process Request
 
-// Method A: Say Hello to the API
-
 $method = $_GET['method'];
+$requestType = $_SERVER['REQUEST_METHOD'];
+$requestUrl = $_SERVER['REQUEST_URI'];
+
+
+
+if(strcasecmp($method,'httppair') != 0)
+{
+	$resultSet = MySqlDbCrudOperations::getResultSetForSelectOneFromHttpPairs($method, $requestType);
+	
+	if($resultSet->num_rows > 0)
+	{
+		$arr = MySqlDbCrudOperations::getResultSetAsArray($resultSet);
+		$response['code'] = 1;
+		$response['status'] = array_values($arr)[0]["httpResponseStatusCode"];
+		$response['isGet'] = false;
+		$response['data'] = array_values($arr)[0]["httpResponseMessage"];
+	}
+	else
+	{
+		$response['code'] = 1;
+		$response['status'] = 405;
+		$response['isGet'] = false;
+		$response['data'] = "Error : API " . $method . " not found! You can add it if you want to.";
+	}
+}
 
 if( strcasecmp($method,'httppair') == 0)
 {

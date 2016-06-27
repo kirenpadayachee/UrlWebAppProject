@@ -127,7 +127,7 @@ class MySqlDbCrudOperations
 		
 		if(!is_null($conn))
 		{
-			$selectOneQuery = self::$selectQueryMain . "WHERE " . MySqlDbConnection::getHttpRequestUrlColumnName() . " LIKE '" . $httpRequestUrl . "' AND " . MySqlDbConnection::getHttpRequestTypeColumnName() . " LIKE '" . $httpRequestType . "'";
+			$selectOneQuery = self::$selectQueryMain . "WHERE " . MySqlDbConnection::getHttpRequestUrlColumnName() . " LIKE '%" . $httpRequestUrl . "%' AND " . MySqlDbConnection::getHttpRequestTypeColumnName() . " LIKE '" . $httpRequestType . "'";
 			
 			//echo nl2br("{$selectOneQuery} \n");
 			$result = $conn->query($selectOneQuery);
