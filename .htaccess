@@ -4,3 +4,4 @@ RewriteEngine on
 
 # Request routing
 RewriteRule ^([a-zA-Z0-9_-]*)\.(html|json|xml)?$   index.php?method=$1&format=$2 [nc,qsa]
+ErrorDocument 404 "<H1>ERROR 404 Page not found. If API exists, remember that only .html, .json and .xml extensions are allowed</H1>"
