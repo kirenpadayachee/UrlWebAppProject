@@ -133,30 +133,15 @@ $method = $_GET['method'];
 $requestType = $_SERVER['REQUEST_METHOD'];
 $requestUrl = $_SERVER['REQUEST_URI'];
 
-
-
-if(strcasecmp($method,'httppair') != 0)
+//Home page
+if(strcasecmp($method,"") == 0)
 {
-	$resultSet = MySqlDbCrudOperations::getResultSetForSelectOneFromHttpPairs($method, $requestType);
-	
-	if($resultSet->num_rows > 0)
-	{
-		$arr = MySqlDbCrudOperations::getResultSetAsArray($resultSet);
-		$response['code'] = 1;
-		$response['status'] = array_values($arr)[0]["httpResponseStatusCode"];
-		$response['isGet'] = false;
-		$response['data'] = array_values($arr)[0]["httpResponseMessage"];
-	}
-	else
-	{
-		$response['code'] = 1;
-		$response['status'] = 405;
-		$response['isGet'] = false;
-		$response['data'] = "Error : API " . $method . " not found! You can add it if you want to.";
-	}
+	$html = file_get_contents("indexHtmlTemplate.html");
+	echo $html;
 }
 
-if( strcasecmp($method,'httppair') == 0)
+//All HttpPair API calls
+if(strcasecmp($method,'httppair') == 0)
 {
 	  switch($requestType) {
 	  case 'PUT': //insert or update
@@ -251,6 +236,28 @@ if( strcasecmp($method,'httppair') == 0)
 		  header('Allow: GET, PUT, DELETE, POST');
 		  break;
 	  }
+}
+
+//All Stored DB API calls
+if((strcasecmp($method,"") != 0) && (strcasecmp($method,'httppair') != 0))
+{
+	$resultSet = MySqlDbCrudOperations::getResultSetForSelectOneFromHttpPairs($method, $requestType);
+	
+	if($resultSet->num_rows > 0)
+	{
+		$arr = MySqlDbCrudOperations::getResultSetAsArray($resultSet);
+		$response['code'] = 1;
+		$response['status'] = array_values($arr)[0]["httpResponseStatusCode"];
+		$response['isGet'] = false;
+		$response['data'] = array_values($arr)[0]["httpResponseMessage"];
+	}
+	else
+	{
+		$response['code'] = 1;
+		$response['status'] = 405;
+		$response['isGet'] = false;
+		$response['data'] = "Error : API " . $method . " not found! You can add it if you want to.";
+	}
 }
 
 // --- Step 3: Deliver Response
