@@ -24,17 +24,19 @@ class MySqlDbCrudOperations
 	public static function insertOrUpdateHttpPairs($httpRequestUrl, $httpRequestType, $httpResponseStatusCode, $httpResponseMessage)
 	{
 	    $conn = MySqlDbConnection::getDbConnection();
+		$returnResult = 1;
 		
 		if(!is_null($conn))
 		{
 			$insertValues = " VALUES ('{$httpRequestUrl}', '{$httpRequestType}', {$httpResponseStatusCode}, '{$httpResponseMessage}') ";
 			$insertOnDuplicateKeys = " ON DUPLICATE KEY UPDATE " . MySqlDbConnection::getHttpResponseStatusCodeColumnName() . "=VALUES(" . MySqlDbConnection::getHttpResponseStatusCodeColumnName() . "), " . MySqlDbConnection::getHttpResponseMessageColumnName() . "=VALUES(" . MySqlDbConnection::getHttpResponseMessageColumnName() . ")";
 			$insertQuery = self::$insertQueryMain . $insertValues . $insertOnDuplicateKeys;
-			echo nl2br("{$insertQuery} \n");
+			//echo nl2br("{$insertQuery} \n");
 			
 			if ($result = $conn->query($insertQuery) === TRUE) 
 			{
 				//echo nl2br("Table Insert Success \n");
+				$returnResult = 0;
 			} 
 			else 
 			{
@@ -43,11 +45,14 @@ class MySqlDbCrudOperations
 			
 			$conn->close();
 		}
+		
+		return $returnResult;
 	}
 	
 	public static function updateHttpPairs($httpRequestUrl, $httpRequestType, $httpResponseStatusCode, $httpResponseMessage)
 	{
 	    $conn = MySqlDbConnection::getDbConnection();
+		$returnResult = 1;
 		
 		if(!is_null($conn))
 		{
@@ -59,6 +64,7 @@ class MySqlDbCrudOperations
 			if ($result = $conn->query($updateQuery) === TRUE) 
 			{
 				//echo nl2br("Table Update Success \n");
+				$returnResult = 0;
 			} 
 			else 
 			{
@@ -67,11 +73,14 @@ class MySqlDbCrudOperations
 			
 			$conn->close();
 		}
+		
+		return $returnResult;
 	}
 	
 	public static function deleteFromHttpPairs($httpRequestUrl, $httpRequestType)
 	{
 	    $conn = MySqlDbConnection::getDbConnection();
+		$returnResult = 1;
 		
 		if(!is_null($conn))
 		{
@@ -81,6 +90,7 @@ class MySqlDbCrudOperations
 			if ($result = $conn->query($deleteQuery) === TRUE) 
 			{
 				//echo nl2br("Table record deletion Success \n");
+				$returnResult = 0;
 			} 
 			else 
 			{
@@ -89,6 +99,8 @@ class MySqlDbCrudOperations
 			
 			$conn->close();
 		}
+		
+		return $returnResult;
 	}
 	
 	public static function getResultSetForSelectAllFromHttpPairs()

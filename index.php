@@ -21,25 +21,17 @@
 
 // --- Step 1: Initialize variables and functions
 
-/**
+
+ 
+include("mysqldb/mySqlDbInit.php");
+include("mysqldb/mySqlDbCrudOperations.php");
+ 
+ /**
  * Deliver HTTP Response
  * @param string $format The desired HTTP response content type: [json, html, xml]
  * @param string $api_response The desired HTTP response data
  * @return void
  **/
- 
-include("mysqldb/mySqlDbInit.php");
-include("mysqldb/mySqlDbCrudOperations.php");
-
-//MySqlDbCrudOperations::insertOrUpdateHttpPairs("/test", "POST", "200", "A-OK bro!");
-//MySqlDbCrudOperations::insertOrUpdateHttpPairs("/test2", "POST", "200", "Hello dave...");
-//MySqlDbCrudOperations::deleteFromHttpPairs("/test2", "POST");
-//MySqlDbCrudOperations::updateHttpPairs("/test", "GET", 201, "Super!!!");
-
-//MySqlDbCrudOperations::printResultSet(MySqlDbCrudOperations::getResultSetForSelectAllFromHttpPairs());
-
-//MySqlDbCrudOperations::printResultSet(MySqlDbCrudOperations::getResultSetForSelectOneFromHttpPairs("/test2", "POST"));
- 
 function deliver_response($format, $api_response){
 
 	// Define HTTP responses
@@ -60,7 +52,10 @@ function deliver_response($format, $api_response){
 		// Set HTTP Response Content Type
 		header('Content-Type: application/json; charset=utf-8');
 		
-		$api_response['data'] = MySqlDbCrudOperations::getResultSetAsArray($api_response['data']);
+		if($api_response['isGet'] )
+		{
+			$api_response['data'] = MySqlDbCrudOperations::getResultSetAsArray($api_response['data']);
+		}
 
 		// Format data into a JSON response
 		$json_response = json_encode($api_response);
@@ -73,7 +68,10 @@ function deliver_response($format, $api_response){
 		// Set HTTP Response Content Type
 		header('Content-Type: application/xml; charset=utf-8');
 		
-		$api_response['data'] = MySqlDbCrudOperations::getResultSetAsXmlString($api_response['data']);
+		if($api_response['isGet'] )
+		{
+			$api_response['data'] = MySqlDbCrudOperations::getResultSetAsXmlString($api_response['data']);
+		}
 
 		// Format data into an XML response (This is only good at handling string data, not arrays)
 		$xml_response = '<?xml version="1.0" encoding="UTF-8"?>'."\n".
@@ -90,7 +88,10 @@ function deliver_response($format, $api_response){
 		// Set HTTP Response Content Type (This is only good at handling string data, not arrays)
 		header('Content-Type: text/html; charset=utf-8');
 		
-		$api_response['data'] = MySqlDbCrudOperations::getResultSetAsHtmlString($api_response['data']);
+		if($api_response['isGet'] )
+		{
+			$api_response['data'] = MySqlDbCrudOperations::getResultSetAsHtmlString($api_response['data']);
+		}
 
 		// Deliver formatted data
 		echo $api_response['data'];
@@ -135,47 +136,101 @@ if( strcasecmp($method,'httppair') == 0)
 	  case 'PUT': //insert or update
 			$response['code'] = 1;
 			$response['status'] = $api_response_code[ $response['code'] ]['HTTP Response'];
-			$response['data'] = "Hello World " .  $requestType . " " . $requestUrl . " " . $_GET['method'];
+			$response['isGet'] = false;
+			if(array_key_exists("httpRequestUrl",$_GET) &&  array_key_exists("httpRequestType",$_GET) && array_key_exists("httpResponseStatusCode",$_GET) && array_key_exists("httpResponseMessage",$_GET))
+			{
+				$response['data'] = MySqlDbCrudOperations::insertOrUpdateHttpPairs($_GET["httpRequestUrl"], $_GET["httpRequestType"], $_GET["httpResponseStatusCode"], $_GET["httpResponseMessage"]);
+				if($response['data'] == 0)
+				{
+					$response['data'] = "Insert/Update success!";
+				}
+				else
+				{
+					$response['data'] = "Insert/Update failed!";
+				}
+			}
+			else
+			{
+				$response['data'] = "Insert/Update failed. Check parameters : httpRequestUrl, httpRequestType, httpResponseStatusCode, httpResponseMessage";
+			}
 		  break;
 	 
 	  case 'DELETE': //delete
 			$response['code'] = 1;
 			$response['status'] = $api_response_code[ $response['code'] ]['HTTP Response'];
-			$response['data'] = "Hello World " .  $requestType . " " . $requestUrl . " " . $_GET['method'];
+			$response['isGet'] = false;
+			if(array_key_exists("httpRequestUrl",$_GET) &&  array_key_exists("httpRequestType",$_GET))
+			{
+				$response['data'] = MySqlDbCrudOperations::deleteFromHttpPairs($_GET["httpRequestUrl"], $_GET["httpRequestType"]);
+				if($response['data'] == 0)
+				{
+					$response['data'] = "Delete success!";
+				}
+				else
+				{
+					$response['data'] = "Delete failed!";
+				}
+			}
+			else
+			{
+				$response['data'] = "Delete failed. Check parameters : httpRequestUrl, httpRequestType";
+			}
 		  break;
 	 
 	  case 'GET': //select
 			$response['code'] = 1;
 			$response['status'] = $api_response_code[ $response['code'] ]['HTTP Response'];
-			$response['data'] = MySqlDbCrudOperations::getResultSetForSelectAllFromHttpPairs();
+			$response['isGet'] = true;
+			
+			if(array_key_exists("httpRequestUrl",$_GET) &&  array_key_exists("httpRequestType",$_GET))
+			{
+				$response['data'] = MySqlDbCrudOperations::getResultSetForSelectOneFromHttpPairs($_GET["httpRequestUrl"], $_GET["httpRequestType"]);
+				if($response['data']->num_rows == 0)
+				{
+					$response['data'] = "No rows found for httpRequestUrl=" . $_GET["httpRequestUrl"] . " and httpRequestType=" . $_GET["httpRequestType"];
+					$response['isGet'] = false;
+				}
+			}
+			else
+			{
+				$response['data'] = MySqlDbCrudOperations::getResultSetForSelectAllFromHttpPairs();
+			}	
+			
 		  break;
 		  
 	  case 'POST': //update
 			$response['code'] = 1;
 			$response['status'] = $api_response_code[ $response['code'] ]['HTTP Response'];
-			$response['data'] = "Hello World " .  $requestType . " " . $requestUrl . " " . $_GET['method'];
+			$response['isGet'] = false;
+			if(array_key_exists("httpRequestUrl",$_GET) &&  array_key_exists("httpRequestType",$_GET) && array_key_exists("httpResponseStatusCode",$_GET) && array_key_exists("httpResponseMessage",$_GET))
+			{
+				$response['data'] = MySqlDbCrudOperations::updateHttpPairs($_GET["httpRequestUrl"], $_GET["httpRequestType"], $_GET["httpResponseStatusCode"], $_GET["httpResponseMessage"]);
+				if($response['data'] == 0)
+				{
+					$response['data'] = "Update success!";
+				}
+				else
+				{
+					$response['data'] = "Update failed. No rows found for httpRequestUrl=" . $_GET["httpRequestUrl"] . " and httpRequestType=" . $_GET["httpRequestType"];
+				}
+			}
+			else
+			{
+				$response['data'] = "Update failed. Check parameters : httpRequestUrl, httpRequestType, httpResponseStatusCode, httpResponseMessage";
+			}
 		  break;
 		  
 	  default:
 		  header('HTTP/1.1 405 Method Not Allowed');
-		  header('Allow: GET, PUT, DELETE');
+		  header('Allow: GET, PUT, DELETE, POST');
 		  break;
 	  }
-}
-
-if( strcasecmp($method,'hello') == 0){
-	$response['code'] = 1;
-	$response['status'] = $api_response_code[ $response['code'] ]['HTTP Response'];
-	$response['data'] = "Hello World " .  $requestType . " " . $requestUrl . " " . $_GET['method'];
 }
 
 // --- Step 3: Deliver Response
 
 // Return Response to browser
 deliver_response($_GET['format'], $response);
-
-
-
 
 ?>
     
