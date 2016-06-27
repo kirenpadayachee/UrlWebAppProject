@@ -59,6 +59,8 @@ function deliver_response($format, $api_response){
 
 		// Set HTTP Response Content Type
 		header('Content-Type: application/json; charset=utf-8');
+		
+		$api_response['data'] = MySqlDbCrudOperations::getResultSetAsArray($api_response['data']);
 
 		// Format data into a JSON response
 		$json_response = json_encode($api_response);
@@ -70,6 +72,8 @@ function deliver_response($format, $api_response){
 
 		// Set HTTP Response Content Type
 		header('Content-Type: application/xml; charset=utf-8');
+		
+		$api_response['data'] = MySqlDbCrudOperations::getResultSetAsXmlString($api_response['data']);
 
 		// Format data into an XML response (This is only good at handling string data, not arrays)
 		$xml_response = '<?xml version="1.0" encoding="UTF-8"?>'."\n".
@@ -85,6 +89,8 @@ function deliver_response($format, $api_response){
 
 		// Set HTTP Response Content Type (This is only good at handling string data, not arrays)
 		header('Content-Type: text/html; charset=utf-8');
+		
+		$api_response['data'] = MySqlDbCrudOperations::getResultSetAsHtmlString($api_response['data']);
 
 		// Deliver formatted data
 		echo $api_response['data'];
@@ -141,8 +147,7 @@ if( strcasecmp($method,'httppair') == 0)
 	  case 'GET': //select
 			$response['code'] = 1;
 			$response['status'] = $api_response_code[ $response['code'] ]['HTTP Response'];
-			$response['data'] = MySqlDbCrudOperations::getResultSetString(MySqlDbCrudOperations::getResultSetForSelectAllFromHttpPairs()) .  $requestType . " " . $requestUrl . " " . $_GET['method'];
-			//$response['data'] =  $requestType . " " . $requestUrl . " " . $_GET['method'];
+			$response['data'] = MySqlDbCrudOperations::getResultSetForSelectAllFromHttpPairs();
 		  break;
 		  
 	  case 'POST': //update

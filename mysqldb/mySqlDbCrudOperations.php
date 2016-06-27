@@ -126,13 +126,33 @@ class MySqlDbCrudOperations
 		return $result;
 	}
 	
-	public static function getResultSetString($resultSet)
+	public static function getResultSetAsArray($resultSet)
+	{
+		$tableArray = array();
+		
+		if(!is_null($resultSet))
+		{
+			while($row = $resultSet->fetch_assoc()) 
+			{
+				$rowArray = array();
+				$rowArray[MySqlDbConnection::getHttpRequestUrlColumnName()] = $row[MySqlDbConnection::getHttpRequestUrlColumnName()];
+				$rowArray[MySqlDbConnection::getHttpRequestTypeColumnName()] = $row[MySqlDbConnection::getHttpRequestTypeColumnName()];
+				$rowArray[MySqlDbConnection::getHttpResponseStatusCodeColumnName()] = $row[MySqlDbConnection::getHttpResponseStatusCodeColumnName()];
+				$rowArray[MySqlDbConnection::getHttpResponseMessageColumnName()] = $row[MySqlDbConnection::getHttpResponseMessageColumnName()];
+				array_push($tableArray,$rowArray);
+			}
+		}
+		
+		return $tableArray;
+	}
+	
+	public static function getResultSetAsHtmlString($resultSet)
 	{
 		$resultString = "";
 		
 		if(!is_null($resultSet))
 		{
-			$resultString .= '<table cellpadding="0" cellspacing="0" class="db-table">';
+			$resultString .= '<table border="1" cellpadding="0" cellspacing="0" class="db-table">';
 			$resultString .=  "<tr><th>" . MySqlDbConnection::getHttpRequestUrlColumnName() . "</th><th>" . MySqlDbConnection::getHttpRequestTypeColumnName() . "</th><th>" . MySqlDbConnection::getHttpResponseStatusCodeColumnName() . "</th><th>" . MySqlDbConnection::getHttpResponseMessageColumnName() . "</th></tr>";
 			while($row = $resultSet->fetch_assoc()) 
 			{
@@ -144,11 +164,35 @@ class MySqlDbCrudOperations
 		return $resultString;
 	}
 	
+	public static function getResultSetAsXmlString($resultSet)
+	{
+		$resultString = "";
+		
+		if(!is_null($resultSet))
+		{
+			$resultString .= '<HttpPairs>';
+
+			while($row = $resultSet->fetch_assoc()) 
+			{
+				$resultString .= '<HttpPair>';
+				$resultString .= "<" . MySqlDbConnection::getHttpRequestUrlColumnName() . ">" . $row[MySqlDbConnection::getHttpRequestUrlColumnName()] . "</" . MySqlDbConnection::getHttpRequestUrlColumnName() . ">";
+				$resultString .= "<" . MySqlDbConnection::getHttpRequestTypeColumnName() . ">" . $row[MySqlDbConnection::getHttpRequestTypeColumnName()] . "</" . MySqlDbConnection::getHttpRequestTypeColumnName() . ">";
+				$resultString .= "<" . MySqlDbConnection::getHttpResponseStatusCodeColumnName() . ">" . $row[MySqlDbConnection::getHttpResponseStatusCodeColumnName()] . "</" . MySqlDbConnection::getHttpResponseStatusCodeColumnName() . ">";
+				$resultString .= "<" . MySqlDbConnection::getHttpResponseMessageColumnName() . ">" . $row[MySqlDbConnection::getHttpResponseMessageColumnName()] . "</" . MySqlDbConnection::getHttpResponseMessageColumnName() . ">";
+				$resultString .= '</HttpPair>';
+			}
+			
+			$resultString .=  '</HttpPairs>';
+		}
+		
+		return $resultString;
+	}
+	
 	public static function printResultSet($resultSet)
 	{
 		if(!is_null($resultSet))
 		{
-			echo '<table cellpadding="0" cellspacing="0" class="db-table">';
+			echo '<table border="1" cellpadding="0" cellspacing="0" class="db-table">';
 			echo "<tr><th>" . MySqlDbConnection::getHttpRequestUrlColumnName() . "</th><th>" . MySqlDbConnection::getHttpRequestTypeColumnName() . "</th><th>" . MySqlDbConnection::getHttpResponseStatusCodeColumnName() . "</th><th>" . MySqlDbConnection::getHttpResponseMessageColumnName() . "</th></tr>";
 			while($row = $resultSet->fetch_assoc()) 
 			{
