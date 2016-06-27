@@ -1,0 +1,52 @@
+<html>
+<head>
+<script class="jsbin" src="http://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script>
+<script type="text/javascript">
+
+  jQuery(function($) {
+  var i = 0;
+  
+  $('#addButton').click(addAnotherTextBox);
+  
+  function addAnotherTextBox() {
+    $("#theForm").append("<br><label>Parameter Name<input type='text' name='parameterName_" + i + "' id='parameterName_" + i + "'  >").append("<label>Parameter Value<input type='text' name='parameterValue_" + i + "' id='parameterName_" + i + "' ><br>");
+	i = i + 1;
+  }
+});
+</script>
+<meta charset=utf-8 />
+<title>Home Page</title>
+<!--[if IE]>
+  <script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+<![endif]-->
+
+</head>
+<body>
+<form action="apiRedirectTest.php" method="post">
+     <label for="httpRequestTypes">HTTP Request Types</label>
+     <input list="httpRequestTypes" name="httpRequestTypes" id="httpRequestTypesList" />
+     <datalist id="httpRequestTypes">
+         <option value="GET">
+         <option value="POST">
+         <option value="PUT">
+         <option value="DELETE">
+         <option value="OPTIONS">
+         <option value="HEAD">
+         <option value="PATCH">
+         <option value="PROPFIND">
+         <option value="COPY">
+         <option value="MOVE">
+     </datalist>
+     
+     <label for="url">URL</label>
+     <input id="urlTarget" name="urlTarget" type="text"/>
+  
+     <input type="submit" />
+     <br>
+     <input id='addButton' type='button' value='Add Parameter'>
+     <div id='theForm'></div>
+     
+</form>
+</body>
+
+</html>
