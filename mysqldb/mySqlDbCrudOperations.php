@@ -21,14 +21,16 @@ class MySqlDbCrudOperations
 		self::$deleteQueryMain = "DELETE FROM " . MySqlDbConnection::getHttpPairTableName() . " ";
 	}
 
-	public static function insertIntoHttpPairs($httpRequestUrl, $httpRequestType, $httpResponseStatusCode, $httpResponseMessage)
+	public static function insertOrUpdateHttpPairs($httpRequestUrl, $httpRequestType, $httpResponseStatusCode, $httpResponseMessage)
 	{
 	    $conn = MySqlDbConnection::getDbConnection();
 		
 		if(!is_null($conn))
 		{
-			$insertQuery = self::$insertQueryMain . "VALUES ('{$httpRequestUrl}', '{$httpRequestType}', {$httpResponseStatusCode}, '{$httpResponseMessage}')";
-			//echo nl2br("{$insertQuery} \n");
+			$insertValues = " VALUES ('{$httpRequestUrl}', '{$httpRequestType}', {$httpResponseStatusCode}, '{$httpResponseMessage}') ";
+			$insertOnDuplicateKeys = " ON DUPLICATE KEY UPDATE " . MySqlDbConnection::getHttpResponseStatusCodeColumnName() . "=VALUES(" . MySqlDbConnection::getHttpResponseStatusCodeColumnName() . "), " . MySqlDbConnection::getHttpResponseMessageColumnName() . "=VALUES(" . MySqlDbConnection::getHttpResponseMessageColumnName() . ")";
+			$insertQuery = self::$insertQueryMain . $insertValues . $insertOnDuplicateKeys;
+			echo nl2br("{$insertQuery} \n");
 			
 			if ($result = $conn->query($insertQuery) === TRUE) 
 			{

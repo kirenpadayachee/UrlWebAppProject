@@ -31,14 +31,14 @@
 include("mysqldb/mySqlDbInit.php");
 include("mysqldb/mySqlDbCrudOperations.php");
 
-//MySqlDbCrudOperations::insertIntoHttpPairs("/test", "POST", "200", "A-OK bro!");
-//MySqlDbCrudOperations::insertIntoHttpPairs("/test2", "POST", "200", "Hello Dave...");
-//MySqlDbCrudOperations::deleteFromHttpPairs("/test", "POST");
+//MySqlDbCrudOperations::insertOrUpdateHttpPairs("/test", "POST", "200", "A-OK bro!");
+//MySqlDbCrudOperations::insertOrUpdateHttpPairs("/test2", "POST", "200", "Hello dave...");
+//MySqlDbCrudOperations::deleteFromHttpPairs("/test2", "POST");
 //MySqlDbCrudOperations::updateHttpPairs("/test", "GET", 201, "Super!!!");
 
 //MySqlDbCrudOperations::printResultSet(MySqlDbCrudOperations::getResultSetForSelectAllFromHttpPairs());
 
-//MySqlDbCrudOperations::printResultSet(MySqlDbCrudOperations::getResultSetForSelectOneFromHttpPairs("/test", "POST"));
+//MySqlDbCrudOperations::printResultSet(MySqlDbCrudOperations::getResultSetForSelectOneFromHttpPairs("/test2", "POST"));
  
 function deliver_response($format, $api_response){
 
@@ -123,34 +123,34 @@ $response['data'] = NULL;
 
 $method = $_GET['method'];
 
-/*
-echo "METHODDDDDDDDD ::::::::    " . $method . "        ";
-echo "requestType ::::::::    " . $requestType . "        ";
-echo "requestUrl ::::::::    " . $requestUrl . "        ";
-echo "COMPARE :::: " . ( strcasecmp($method,'httppair') == 0);
-*/
-
 if( strcasecmp($method,'httppair') == 0)
 {
 	  switch($requestType) {
-	  case 'PUT':
+	  case 'PUT': //insert or update
 			$response['code'] = 1;
 			$response['status'] = $api_response_code[ $response['code'] ]['HTTP Response'];
 			$response['data'] = "Hello World " .  $requestType . " " . $requestUrl . " " . $_GET['method'];
 		  break;
 	 
-	  case 'DELETE':
+	  case 'DELETE': //delete
 			$response['code'] = 1;
 			$response['status'] = $api_response_code[ $response['code'] ]['HTTP Response'];
 			$response['data'] = "Hello World " .  $requestType . " " . $requestUrl . " " . $_GET['method'];
 		  break;
 	 
-	  case 'GET':
+	  case 'GET': //select
 			$response['code'] = 1;
 			$response['status'] = $api_response_code[ $response['code'] ]['HTTP Response'];
 			$response['data'] = MySqlDbCrudOperations::getResultSetString(MySqlDbCrudOperations::getResultSetForSelectAllFromHttpPairs()) .  $requestType . " " . $requestUrl . " " . $_GET['method'];
 			//$response['data'] =  $requestType . " " . $requestUrl . " " . $_GET['method'];
 		  break;
+		  
+	  case 'POST': //update
+			$response['code'] = 1;
+			$response['status'] = $api_response_code[ $response['code'] ]['HTTP Response'];
+			$response['data'] = "Hello World " .  $requestType . " " . $requestUrl . " " . $_GET['method'];
+		  break;
+		  
 	  default:
 		  header('HTTP/1.1 405 Method Not Allowed');
 		  header('Allow: GET, PUT, DELETE');
