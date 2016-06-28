@@ -1,0 +1,13 @@
+From the home page you will see the following options:
+	- Display all Http Request-Response Pairs
+	- Add Or Update Http Request-Response Pairs
+	- Delete Http Request-Response Pairs
+	- Test API's 
+	- Unit Testing Of APIs
+	
+The first 3 links provide normal CRUD database operations. 
+As mentioned in the text you can also do the same functions using API calls with /httppair using an HTTP Request tool (cURL, HttpRequester, etc.) of your choice or...
+
+Use the Test API's page to test /httppair and any other stored API calls.
+
+The Unit Testing Of APIs option does unit tests for all basic CRUD operations, testing of stored and missing API calls, and testing of the different output formats.

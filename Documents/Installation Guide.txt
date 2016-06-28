@@ -1,0 +1,16 @@
+This document describes the requirements and setup process for the website.
+
+Requirements :
+PHP5+
+Apache Webserver (or suitable webserver that can serve PHP pages and parse .htaccess files)
+MySQL Server
+Cloned Git repository from https://github.com/kirenpadayachee/UrlWebAppProject.git
+
+Installation :
+1. Create a new domain/subdomain
+2. Copy all files and folders from the cloned repository into your public folder for the domain/subdomain created.
+3. Edit the /mysqldb/mySqlDbConnection.ini file with your mySQL server's login details.
+4. Hit the URL created on a browser to bring up the home page.
+
+Alternatively go to http://urlwebapp.djxisix.com/. The site is already set up and running there.
+

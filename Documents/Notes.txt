@@ -1,0 +1,9 @@
+As you can see the website looks ugly AF. I chose to focus on getting the functionality to work properly over the asthetics given the time available to do the assignment.
+
+Given the time available to do the assignment, I chose to use technologies I am familiar with. I did research on lots of other things, Node.js, MongoDB etc, but I chose to go 
+with the more familiar technologies so I could get everything working quickly and with minimal effort. To start learning new technologies with so little time left, I might not have made
+the deadline. Also its better the devil you know than the one you don't. And given the amount of issues I had with the known technologies I chose, I would say it was a wise decision
+as I dont know what issues I would have run into with newer technologies.
+
+I also chose PHP and MySQL as these are easy to install and to get up and running quickly. Things like Node.js and the libraries dependent on it had so many installations involved, 
+I wasn't convinced it would be easy to set up. I tested the project on my own cPanel website, and it was very quick to get it working properly.
