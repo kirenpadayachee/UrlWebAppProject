@@ -1,0 +1,84 @@
+<html>
+<head>
+<script class="jsbin" src="http://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script>
+<script type="text/javascript">
+
+  jQuery(function($) {
+
+  var currentPage = document.baseURI.split("/").pop();
+  var currentRealtiveUrl = document.baseURI.replace(currentPage,"");
+  var currentProcessRequestCompleted = false;
+  var currentProcessRequestResult = "";
+  
+  var resultsPassed = 0;
+  var resultsFailed = 0;
+	
+  var xhr = new XMLHttpRequest();
+  
+    function runApiSynchronous(httpRequestType, url, parameterString) {
+		xhr.open(httpRequestType, url + parameterString, false);
+		xhr.send();
+	    return xhr.responseText;
+	}
+	
+	function runApiUnitTest(httpRequestType, url, parameterString, expectedOutput, testMessage)
+	{
+		var getResponseString = runApiSynchronous(httpRequestType, url, parameterString);
+		var testResult = getResponseString === expectedOutput ? "PASSED" : "FAILED";
+		document.write(testMessage + " : " + testResult + "<br>");
+		document.write( httpRequestType + " "  + url + parameterString + "<br>");
+		document.write("Expected Output : " + expectedOutput + "<br>");
+		document.write("Actual Output__     : " + getResponseString + "<br><br><br>");
+		if(testResult === "PASSED")
+		{
+			resultsPassed++;
+		}
+		else
+		{
+			resultsFailed++;
+		}
+	}
+	
+	function displayFinalResults()
+	{
+		document.write("TOTAL PASSED : " + resultsPassed + " / " + (resultsPassed + resultsFailed) + "<br>");
+		document.write("TOTAL FAILED : " + resultsFailed + " / " + (resultsPassed + resultsFailed));
+	}
+	
+	
+	
+	//PUT / Insert Test - html output
+	runApiUnitTest("PUT", currentRealtiveUrl + "httppair.html", "?httpRequestUrl=/unitTest&httpRequestType=GET&httpResponseStatusCode=200&httpResponseMessage=InsertTest", "Insert/Update success!", "PUT/Insert Test - html output");
+	
+	//POST / Update Test - html output
+	runApiUnitTest("POST", currentRealtiveUrl + "httppair.html", "?httpRequestUrl=/unitTest&httpRequestType=GET&httpResponseStatusCode=201&httpResponseMessage=UpdateTest", "Update success!", "POST/Update Test - html output");
+	
+	//GET / Select Test - json output
+	runApiUnitTest("GET", currentRealtiveUrl + "httppair.json", "?httpRequestUrl=/unitTest&httpRequestType=GET", "{\"status\":200,\"data\":[{\"httpRequestUrl\":\"\\/unitTest\",\"httpRequestType\":\"GET\",\"httpResponseStatusCode\":\"201\",\"httpResponseMessage\":\"UpdateTest\"}]}", "GET / Select Test - json output");
+	
+	//Actually call the API - json output
+	runApiUnitTest("GET", currentRealtiveUrl + "unitTest.json", "", "{\"status\":\"201\",\"data\":\"UpdateTest\"}", "API Test - json output");
+	
+	//DELETE / delete Test
+	runApiUnitTest("DELETE", currentRealtiveUrl + "httppair.html", "?httpRequestUrl=/unitTest&httpRequestType=GET", "Delete success!", "DELETE / delete Test - html output");
+	
+	//Check for missing API - json output
+	runApiUnitTest("GET", currentRealtiveUrl + "unitTest.json", "", "{\"status\":405,\"data\":\"Error : API unitTest not found! You can add it if you want to.\"}", "Check for missing API - json output");
+	
+	displayFinalResults();
+	
+});
+</script>
+
+<meta charset=utf-8 />
+<title>Home Page</title>
+<!--[if IE]>
+  <script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+<![endif]-->
+
+</head>
+<body>
+
+</body>
+
+</html>
