@@ -8,19 +8,24 @@
 
 class MySqlDbConnection
 {
-	private static $dbhost = 'localhost:3306';
-	private static $dbuser = 'root';
-	private static $dbpass = 'mysql';
-	private static $dbName = 'UrlWebAppDb';
+	private static $dbhost = null;
+	private static $dbuser = null;
+	private static $dbpass = null;
+	private static $dbName = null;
 	private static $httpPairTableName  = "HttpPair";
 	private static $httpRequestUrlCol	= "httpRequestUrl";
 	private static $httpRequestTypeCol	= "httpRequestType";
 	private static $httpResponseStatusCodeCol	= "httpResponseStatusCode";
 	private static $httpResponseMessageCol	= "httpResponseMessage";
 	
-	public function isDbConnected()
+	public static function init()
 	{
-		return $this->isDbConnected;
+		$ini = parse_ini_file('mySqlDbConnection.ini');
+		
+		self::$dbhost = $ini['dbhost'];
+		self::$dbuser = $ini['dbuser'];
+		self::$dbpass = $ini['dbpass'];
+		self::$dbName = $ini['dbName'];
 	}
 	
 	public static function getDbHost()
@@ -100,5 +105,7 @@ class MySqlDbConnection
 	}
 	
 }
+
+MySqlDbConnection::init();
 
 ?>
