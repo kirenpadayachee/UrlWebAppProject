@@ -9,7 +9,7 @@
   $('#addButton').click(addAnotherTextBox);
   
   function addAnotherTextBox() {
-    $("#theForm").append("<br><label>Parameter Name<input type='text' name='parameterName_" + i + "' id='parameterName_" + i + "'  >").append("<label>Parameter Value<input type='text' name='parameterValue_" + i + "' id='parameterName_" + i + "' ><br>");
+    $("#paramButtons").append("<br><label>Parameter Name <input type='text' name='parameterName_" + i + "' id='parameterName_" + i + "'  >").append("<label>Parameter Value <input type='text' name='parameterValue_" + i + "' id='parameterValue_" + i + "' ><br>");
 	i = i + 1;
   }
   
@@ -17,8 +17,27 @@
   $('#runButton').click(runApi);
   
   function runApi(e) {
-		//xhr.open('OPTIONS', "http://127.0.0.1/urlwebapp/howdy.xml", true);
-		xhr.open($("#httpRequestTypesList").val(), $("#urlTarget").val(), true);
+  
+		var queryString = "";
+		$( "input" ).each(function( i ) {
+			if((this.type == "text") && (this.name.search("parameterName_") != -1))
+			{
+				var parameterIndex = this.name.slice(this.name.search("_") + 1,this.name.length);
+				if(parameterIndex == 0)
+				{
+					queryString += "?";
+				}
+				if(parameterIndex > 0)
+				{
+					queryString += "&";
+				}
+				var parameterNameValueString = $("#" + this.name).val() + "=" + $("#parameterValue_" + parameterIndex).val();
+				queryString += parameterNameValueString;
+				
+			}
+		});
+  
+		xhr.open($("#httpRequestTypesList").val(), $("#urlTarget").val() + queryString, true);
 		xhr.send();
 	
 		xhr.onreadystatechange = processRequest;
@@ -28,12 +47,28 @@
 	
 	function processRequest(e) {
 		if (xhr.readyState == 4) {
-			//document.write(xhr.responseText);
 			$("textarea#apiResult").val(xhr.responseText);
+			document.getElementById('displayAllFrame').contentWindow.location.reload();
 		}
 	}
 });
 </script>
+
+<style type="text/css">
+#wrapper {
+   width:1300px;
+   margin:0 auto;
+}
+#left_col {
+   float:left;
+   width:650px;
+}
+#right_col {
+   float:right;
+   width:650px;
+}
+</style>
+
 <meta charset=utf-8 />
 <title>Home Page</title>
 <!--[if IE]>
@@ -43,32 +78,49 @@
 </head>
 <body>
 
-     <label for="httpRequestTypes">HTTP Request Types</label>
-     <input list="httpRequestTypes" name="httpRequestTypesList" id="httpRequestTypesList" />
-     <datalist id="httpRequestTypes">
-         <option value="GET">
-         <option value="POST">
-         <option value="PUT">
-         <option value="DELETE">
-         <option value="OPTIONS">
-         <option value="HEAD">
-         <option value="PATCH">
-         <option value="PROPFIND">
-         <option value="COPY">
-         <option value="MOVE">
-     </datalist>
-     
-     <label for="url">URL</label>
-     <input id="urlTarget" name="urlTarget" type="text"/>
-  
-     <input id='runButton' type='button' value='Run API'>
-     <br>
-     <input id='addButton' type='button' value='Add Parameter'>
-     <div id='theForm'></div>
-	 
-	 <br><br><br>
-	 <label for="apiResult">API Result</label><br>
-	 <textarea name="apiResult" id="apiResult" rows="20" cols="100" />
+	<div id="wrapper">
+
+          <header>
+                   <nav> </nav>
+          </header>
+
+		 <div id="left_col">  
+			 <iframe id="displayAllFrame" name="displayAllFrame" src="displayAllHttpPairs.php" width="600" height="500"></iframe>
+		 </div> 
+		 
+		 
+		 <div id="right_col">  
+			<label for="httpRequestTypes">HTTP Request Types</label>
+			 <input list="httpRequestTypes" name="httpRequestTypesList" id="httpRequestTypesList" />
+			 <datalist id="httpRequestTypes">
+				 <option value="GET">
+				 <option value="POST">
+				 <option value="PUT">
+				 <option value="DELETE">
+				 <option value="OPTIONS">
+				 <option value="HEAD">
+				 <option value="PATCH">
+				 <option value="PROPFIND">
+				 <option value="COPY">
+				 <option value="MOVE">
+			 </datalist>
+		 
+		 
+			 <label for="url">URL</label>
+			 <input id="urlTarget" name="urlTarget" type="text"/>
+		  
+			 <input id='runButton' type='button' value='Run API'>
+			 <br>
+			 <input id='addButton' type='button' value='Add Parameter'>
+			 <div id='paramButtons'></div>
+			 
+			 <br><br><br>
+			 <label for="apiResult">API Result</label><br>
+			 <textarea name="apiResult" id="apiResult" rows="20" cols="100" />
+		 </div> 
+		  <footer>  </footer>
+		 
+	 </div>
 
 </body>
 
